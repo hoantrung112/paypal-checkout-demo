@@ -7,6 +7,9 @@ let cart = [];
 addToCartBtn.addEventListener("click", () => {
   const input = document.querySelectorAll(".input-quantity");
   let itemCount = 0;
+  // clear cart
+  cart.splice(0, cart.length);
+  // add to cart
   input.forEach((e, id) => {
     if (!isNaN(parseInt(e.value))) {
       cart.push({

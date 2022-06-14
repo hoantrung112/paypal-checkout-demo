@@ -7,11 +7,13 @@ app.use(express.static("public"));
 app.use(express.json());
 
 const paypal = require("@paypal/checkout-server-sdk");
+const taxPercentage = 15;
 const Environment =
   process.env.NODE_ENV === "production"
     ? paypal.core.LiveEnvironment
     : paypal.core.SandboxEnvironment;
 
+// init environment
 const paypalClient = new paypal.core.PayPalHttpClient(
   new Environment(
     process.env.PAYPAL_CLIENT_ID_DEFAULT,
@@ -38,7 +40,13 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get('/transaction-success', (req, res) => {
+  res.render("success");
+})
+
 app.post("/create-order", async (req, res) => {
+  // Construct a request object and set desired parameters
+  // Here, OrdersCreateRequest() creates a POST request to /v2/checkout/orders
   const request = new paypal.orders.OrdersCreateRequest();
   if (req.body.items == null && req.body.items.length == 0) {
     return res.status(400).json({
@@ -51,6 +59,9 @@ app.post("/create-order", async (req, res) => {
   request.prefer("return=representation");
   request.requestBody({
     intent: "CAPTURE",
+    application_context: {
+      return_url: "http://localhost:3000/transaction-success",
+    },
     purchase_units: [
       {
         amount: {
@@ -80,8 +91,6 @@ app.post("/create-order", async (req, res) => {
 
   try {
     const order = await paypalClient.execute(request);
-    console.log(order);
-    console.log(order.result.links[0]);
     res.json({ id: order.result.id });
   } catch (e) {
     res.status(500).json({ error: e.message });
