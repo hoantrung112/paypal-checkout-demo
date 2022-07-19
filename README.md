@@ -27,4 +27,4 @@ localhost:3000
 ```
 
 - Account's credentials to log in during transaction
-Go to https://developer.paypal.com/developer/accounts and select corresponding sandbox account to proceed. You can also edit sandbox account's balance and other information.
+  Go to https://developer.paypal.com/developer/accounts and select corresponding sandbox account to proceed. You can also edit sandbox account's balance and other information.
